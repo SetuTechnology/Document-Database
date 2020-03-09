@@ -1,19 +1,30 @@
-const formidable = require('formidable');
+const excelToJson = require('convert-excel-to-json');
 
 module.exports = async (req, res) => {
-    // const form = formidable({ multiples: true });
-    const form = new formidable.IncomingForm();
-    // console.log('form',form);
+    let fileData = req.files.upload; // the uploaded file object
+    console.log(fileData);
 
-    console.log('in here');
+    if(Array.isArray(fileData)) {
+        for (let file in fileData) {
+            console.log(fileData[file].originalname);
+            return res.json(readFile(fileData[file].path));
 
-    form.parse(req);
-
-    form.on('file', function (name, file){
-        console.log('Uploaded ' + file.name);
-    });
-
-    return res.write('sucess');
+        }
+    }
+    else {
+        console.log(fileData.originalname)
+        return res.json(readFile(fileData.path));
+    }
 };
+
+function readFile(filePath){
+    const result = excelToJson({
+        sourceFile: filePath,
+        columnToKey: {
+            '*': '{{columnHeader}}'
+        }
+    });
+    return result;
+}
 
 
