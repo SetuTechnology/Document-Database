@@ -12,9 +12,8 @@ const Record = new keystone.List('Record', {
 
 Record.add({
     title: { type: String, initial:true, required: true },
-    state: { type: Types.Select, options: 'draft, published, archived', default: 'draft', index: true },
     location: { type: Types.Relationship, ref: 'Location', index: true },
-    publishedDate: { type: Types.Date, index: true, dependsOn: { state: 'published' } },
+    GDriveLink: { type: Types.Url, required: true, index: true, initial: true}
 });
 
 Record.defaultColumns = 'title';

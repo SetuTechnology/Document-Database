@@ -1,9 +1,4 @@
 const _ = require('lodash');
-const requestIp = require('request-ip');
-const fetch = require('node-fetch');
-const keystone = require('keystone');
-const maxScoreAllowed = 0.995;
-
 
 exports.initLocals = function (req, res, next) {
 	console.log('fist middleware');
