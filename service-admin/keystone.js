@@ -1,6 +1,7 @@
 // Simulate config options from your production environment by
 // customising the .env file in your project's root folder.
 require('dotenv').config();
+const cron = require('node-cron');
 
 // Require keystone
 const keystone = require('keystone');
@@ -27,6 +28,7 @@ keystone.init({
 	'name': 'Documents Database',
 	'brand': 'Documents Database',
 	'less': 'public',
+	'static': 'public',
 	'favicon': 'public/favicon.ico',
 	'views': 'templates/views',
 	'view engine': '.hbs',
@@ -69,15 +71,26 @@ keystone.set('nav', {
 	users: ['users'],
 });
 
-// (async function(){
-// 	console.log('hi');
-// 	console.log();
-// 	let data = await services.searchService.search('test').catch((err) => {console.log("error occures")});
-// 	// let data = [];
-// 	// let adv = await services.advCampaignService.getAdvCampaign('test').catch((err)=> {console.log(err);});
-// 	// if(adv) data.push(adv);
-// 	console.log('>>>',data);
-// })();
+// # ┌────────────── second (optional)
+// # │ ┌──────────── minute
+// # │ │ ┌────────── hour
+// # │ │ │ ┌──────── day of month
+// # │ │ │ │ ┌────── month
+// # │ │ │ │ │ ┌──── day of week
+// # │ │ │ │ │ │
+// # │ │ │ │ │ │
+// # * * * * * *
+
+let sendMail = cron.schedule('* 15 10 * * *', () =>  {  // send mails at daily 10:15
+	//
+});
+
+sendMail.start();
+
+let checkForExpired = cron.schedule( '* 1 0 * * *', ()=>{  //check for expired date at 00:01 daily
+	//
+});
+checkForExpired.start();
 
 // Start Keystone to connect to your database and initialise the web server
 keystone.start();

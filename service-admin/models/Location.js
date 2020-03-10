@@ -11,7 +11,7 @@ const Location = new keystone.List('Location', {
 
 Location.add({
     name: { type: String, required: true, index: true, initial: true },
-    GDriveLink: {type: Types.Url , required: true, index: true, initial: true },
+    GDriveLink: {type: Types.Url , index: true, },
 });
 
 
@@ -20,9 +20,8 @@ Location.add({
  */
 Location.relationship({ ref: 'Record', path: 'record', refPath: 'location' });
 
-
 /**
- * Registrationw
+ * Registration
  */
 Location.defaultColumns = 'name';
 Location.register();
