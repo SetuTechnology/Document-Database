@@ -3,8 +3,8 @@ const keystone = require('keystone');
 module.exports = async (req, res) => {
 
 
-    const view = new keystone.View(req, res);
-    view.render('uploadFile');
+    // const view = new keystone.View(req, res);
+    res.sendFile(__dirname + '/uploadFile.html');
 
     // return res.end(`
     //     <h2>Upload xls file</h2>

@@ -2,20 +2,33 @@ const excelToJson = require('convert-excel-to-json');
 const keystone = require('keystone');
 
 module.exports = async (req, res) => {
-    let fileData = req.files.upload; // the uploaded file object
-    console.log(fileData);
+    // console.log('here');
+    // console.log('>>>>>>>>>>>>>>>>',req);
+    // let str = req.url.split('/');
+    // let exampleId = str.pop() || str.pop();
+    // if(exampleId!=='fileUpload') return res.send('404');
+
+    let fileData = req.files.files; // the uploaded file object
+    console.log('>>>>>',fileData);
+    if(!fileData) return 'no file uploaded';
+    let result = 2;
 
     if(Array.isArray(fileData)) {
         for (let file in fileData) {
             console.log(fileData[file].originalname);
-            return res.json(readFile(fileData[file]));
+            result = await readFile(fileData[file]);
 
         }
     }
     else {
         console.log(fileData.originalname)
-        return res.json(readFile(fileData));
+        result = await readFile(fileData);
     }
+    console.log('result ', result);
+    if(result !==0)
+        res.end('please check the uploaded file and try again');
+    res.redirect('/');
+
 };
 
 async function readFile(file){
@@ -29,6 +42,8 @@ async function readFile(file){
             '*': '{{columnHeader}}'
         }
     });
+    if(file.extension !== 'xls' && file.extension !== 'xlsx')
+        return -1;
     let locName = file.originalname.substring(0, file.originalname.lastIndexOf(".") );
     let Location = keystone.list('Location').model;
     let isLocationCreated = await Location.findOne({name: locName}).catch(err => {console.log(err)});
@@ -72,7 +87,7 @@ async function readFile(file){
         }
     }
 
-    // return result;
+     return 0;
 }
 
 

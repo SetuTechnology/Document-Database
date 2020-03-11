@@ -32,8 +32,10 @@ exports = module.exports = function (app) {
     // app.use(middleware.addIPAddressToDB);
     app.get('/', routes.views.index);
     app.get('/fileupload',routes.views.uploadFileForm);
-    app.post('/fileupload',routes.views.uploadFile);
+
 	app.get('/sendMail', routes.views.sendMail);
+	app.post('/fileupload', routes.views.uploadFile);
+
     // app.get('/api/search', routes.views.search);
     // app.get('/*', (req, res) => {
     //     // console.log('keystone', keystone);
