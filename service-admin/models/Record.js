@@ -11,7 +11,7 @@ const Record = new keystone.List('Record', {
 });
 
 Record.add({
-    ReportName: { type: String, initial:true },
+    ReportName: { type: String, initial:true, index:true },
     InsuranceDate: { type: Types.Date, initial:true },
     ExpiryDate: { type: Types.Date, initial:true },
     FrequencyOfRenewal: { type: String, initial:true },

@@ -33,7 +33,7 @@ exports = module.exports = function (app) {
     app.get('/', routes.views.index);
     app.get('/fileupload',routes.views.uploadFileForm);
 
-	app.get('/sendMail', routes.views.sendMail);
+	app.post('/sendMail', routes.views.sendMail);
 	app.post('/fileupload', routes.views.uploadFile);
 
     // app.get('/api/search', routes.views.search);
