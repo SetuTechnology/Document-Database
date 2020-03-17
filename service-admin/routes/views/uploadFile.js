@@ -55,36 +55,51 @@ async function readFile(file){
     }
     let loc =  await Location.findOne({name: locName}).catch(err => {console.log(err)});
     console.log('loc',loc);
-    let today = new Date();
+    // let today = new Date();
     let Record = keystone.list('Record').model;
     for(let sheet in results){
         // console.log('>>>>>>>>',sheet);
+
         for(let records in results[sheet]){
-            let record = new Record({
-                ReportName: results[sheet][records]['REPORT NAME']==='n/a' ? null: results[sheet][records]['REPORT NAME'],
-                InsuranceDate: results[sheet][records]['ISSUANCE DATE']==='n/a' ? null: results[sheet][records]['ISSUANCE DATE'],
-                ExpiryDate: results[sheet][records]['EXPIRY DATE']==='n/a' ? null: results[sheet][records]['EXPIRY DATE'],
-                FrequencyOfRenewal: results[sheet][records]['FREQUENCY OF  RENEWAL']==='n/a' ? null: results[sheet][records]['FREQUENCY OF  RENEWAL'],
-                DeadLineForRenewal: results[sheet][records]['DEADLINE FOR  RENEWAL']==='n/a' ? null: results[sheet][records]['DEADLINE FOR  RENEWAL'],
-                Regulator: results[sheet][records]['REGULATOR']==='n/a' ? null: results[sheet][records]['REGULATOR'],
-                ReportProcessor: results[sheet][records]['REPORT PROCESSOR']==='n/a' ? null: results[sheet][records]['REPORT PROCESSOR'],
-                ContactNo: results[sheet][records]['CONTACT NO.']==='n/a' ? null: results[sheet][records]['CONTACT NO.'],
-                EmailAddress: results[sheet][records]['EMAIL ADDRESS']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS'],
-                ImmediateSuperior: results[sheet][records]['IMMEDIATE SUPERIOR']==='n/a' ? null: results[sheet][records]['IMMEDIATE SUPERIOR'],
-                EmailAddress2: results[sheet][records]['EMAIL ADDRESS 2']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS 2'],
-                ReportOwner: results[sheet][records]['REPORT OWNER']==='n/a' ? null: results[sheet][records]['REPORT OWNER'],
-                ContactNo2: results[sheet][records]['CONTACT NO. 2']==='n/a' ? null: results[sheet][records]['CONTACT NO. 2'],
-                EmailAddress3: results[sheet][records]['EMAIL ADDRESS 3']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS 3'],
-                ImmediateSuperior2: results[sheet][records]['IMMEDIATE SUPERIOR 2']==='n/a' ? null: results[sheet][records]['IMMEDIATE SUPERIOR 2'],
-                EmailAddress4: results[sheet][records]['EMAIL ADDRESS 4']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS 4'],
-                Status: results[sheet][records]['STATUS']==='n/a' ? null: results[sheet][records]['STATUS'],
-                Ageing: results[sheet][records]['AGEING']==='n/a' ? null: results[sheet][records]['AGEING'],
-                OngoingProcessDeadline: results[sheet][records]['ONGOING PROCESS  DATE DEADLINE']==='n/a' ? null: results[sheet][records]['ONGOING PROCESS  DATE DEADLINE'],
-                Remarks: results[sheet][records]['REMARKS']==='n/a' ? null: results[sheet][records]['REMARKS'],
-                location: await loc,
+
+            let record = {};
+            record = Object.assign(record, record._doc);
+            delete record._id;
+
+            Record.findOneAndUpdate({ReportName:results[sheet][records]['REPORT NAME']}, record, {upsert: true}, function (err) {
+                if (err)
+                    return console.log(err);
+                console.log('record updated');
             });
-            await record.save().catch(console.error);
         }
+            // let query = {ReportName:results[sheet][records]['REPORT NAME']};
+            // options = { upsert: true };
+            // let record = new Record({
+            //     ReportName: results[sheet][records]['REPORT NAME']==='n/a' ? null: results[sheet][records]['REPORT NAME'],
+            //     InsuranceDate: results[sheet][records]['ISSUANCE DATE']==='n/a' ? null: results[sheet][records]['ISSUANCE DATE'],
+            //     ExpiryDate: results[sheet][records]['EXPIRY DATE']==='n/a' ? null: results[sheet][records]['EXPIRY DATE'],
+            //     FrequencyOfRenewal: results[sheet][records]['FREQUENCY OF  RENEWAL']==='n/a' ? null: results[sheet][records]['FREQUENCY OF  RENEWAL'],
+            //     DeadLineForRenewal: results[sheet][records]['DEADLINE FOR  RENEWAL']==='n/a' ? null: results[sheet][records]['DEADLINE FOR  RENEWAL'],
+            //     Regulator: results[sheet][records]['REGULATOR']==='n/a' ? null: results[sheet][records]['REGULATOR'],
+            //     ReportProcessor: results[sheet][records]['REPORT PROCESSOR']==='n/a' ? null: results[sheet][records]['REPORT PROCESSOR'],
+            //     ContactNo: results[sheet][records]['CONTACT NO.']==='n/a' ? null: results[sheet][records]['CONTACT NO.'],
+            //     EmailAddress: results[sheet][records]['EMAIL ADDRESS']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS'],
+            //     ImmediateSuperior: results[sheet][records]['IMMEDIATE SUPERIOR']==='n/a' ? null: results[sheet][records]['IMMEDIATE SUPERIOR'],
+            //     EmailAddress2: results[sheet][records]['EMAIL ADDRESS 2']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS 2'],
+            //     ReportOwner: results[sheet][records]['REPORT OWNER']==='n/a' ? null: results[sheet][records]['REPORT OWNER'],
+            //     ContactNo2: results[sheet][records]['CONTACT NO. 2']==='n/a' ? null: results[sheet][records]['CONTACT NO. 2'],
+            //     EmailAddress3: results[sheet][records]['EMAIL ADDRESS 3']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS 3'],
+            //     ImmediateSuperior2: results[sheet][records]['IMMEDIATE SUPERIOR 2']==='n/a' ? null: results[sheet][records]['IMMEDIATE SUPERIOR 2'],
+            //     EmailAddress4: results[sheet][records]['EMAIL ADDRESS 4']==='n/a' ? null: results[sheet][records]['EMAIL ADDRESS 4'],
+            //     Status: results[sheet][records]['STATUS']==='n/a' ? null: results[sheet][records]['STATUS'],
+            //     Ageing: results[sheet][records]['AGEING']==='n/a' ? null: results[sheet][records]['AGEING'],
+            //     OngoingProcessDeadline: results[sheet][records]['ONGOING PROCESS  DATE DEADLINE']==='n/a' ? null: results[sheet][records]['ONGOING PROCESS  DATE DEADLINE'],
+            //     Remarks: results[sheet][records]['REMARKS']==='n/a' ? null: results[sheet][records]['REMARKS'],
+            //     location: await loc,
+            // });
+            // await Record.findOneAndUpdate(query, record, options, function(error, result) {if (error) console.log(error)});
+            // await record.update({noExist: true}, {"$setOnInsert": {record}}, {upsert: true});
+        // }
     }
 
      return 0;

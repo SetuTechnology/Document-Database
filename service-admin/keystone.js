@@ -9,6 +9,7 @@ const handlebars = require('express-handlebars');
 const fs = require('fs');
 const {join} = require('path');
 
+
 const addSafeReadOnlyGlobal = (prop, val) => {
 	console.log('[FRAMEWORK]'.bold.yellow, `Exporting safely '${prop.bold}' from ${this.constructor.name}`.cyan);
 	Object.defineProperty(global, prop, {
@@ -61,6 +62,22 @@ keystone.set('locals', {
 });
 
 
+let services = {};
+try {
+	console.log('path is ', join(__dirname, '/services'));
+	let list = fs.readdirSync(join(__dirname, '/services'));
+	list.forEach(item => {
+		if (item.search(/.js$/) !== -1) {
+			let name = item.toString().replace(/\.js$/, '');
+			console.log('[FRAMEWORK]', `Loading Service: '${name}'`);
+			services[name] = new (require(join(__dirname, '/services', name)));
+		}
+	});
+	addSafeReadOnlyGlobal('services', services);
+} catch (err) {
+	console.log(err);
+}
+
 // Load your project's Routes
 keystone.set('routes', require('./routes'));
 
@@ -81,16 +98,59 @@ keystone.set('nav', {
 // # │ │ │ │ │ │
 // # * * * * * *
 
-let sendMail = cron.schedule('* 15 10 * * *', () =>  {  // send mails at daily 10:15
+let sendMail = cron.schedule('* 0 8 * * *', () =>  {  // check for mails at daily 8:00
 	//
 });
 
 sendMail.start();
 
-let checkForExpired = cron.schedule( '* 1 0 * * *', ()=>{  //check for expired date at 00:01 daily
-	//
+let checkForExpired = cron.schedule( '* 1 0 * * *', async ()=>{  //check for deadline/expired date at 00:01 daily
+	let start = new Date();
+	start.setHours(0,0,0,0);
+
+	let end = new Date();
+	end.setHours(23,59,59,999);
+
+	const Record = keystone.list('Record').model;
+
+	let deadlineRecords = await Record.find({DeadlineOfRenewal: {$gte: start, $lt: end}});
+	for(let rec of deadlineRecords){
+		let a = await services.SendEmail.sendEmailToUser(rec.ReportProcessorEmailAddress, 1, rec.ReportName, []);
+	}
+
+	let expiredRecords = await Record.find({DeadlineOfRenewal: {$gte: start, $lt: end}});
+	for(let rec of expiredRecords){
+		let a = await services.SendEmail.sendEmailToUser(rec.ReportProcessorEmailAddress, 2, rec.ReportName, []);
+	}
+
+
 });
 checkForExpired.start();
+
+// let sendmail = async ()=>{
+// 	console.log('inside this func');
+// 	let start = new Date();
+// 	start.setHours(0,0,0,0);
+//
+// 	let end = new Date();
+// 	end.setHours(23,59,59,999);
+//
+// 	const Record = keystone.list('Record').model;
+//
+// 	let deadlineRecords = await Record.find({DeadlineOfRenewal: {$gte: start, $lt: end}});
+// 	for(let rec of deadlineRecords){
+// 		console.log('deadline ',rec);
+// 		let a = await services.sendEmail.sendEmailToUser(rec.ReportProcessorEmailAddress, 1, rec.ReportName, []);
+// 	}
+//
+// 	let expiredRecords = await Record.find({DeadlineOfRenewal: {$gte: start, $lt: end}});
+// 	for(let rec of expiredRecords){
+// 		console.log('expired',rec);
+// 		let a = await services.sendEmail.sendEmailToUser(rec.ReportProcessorEmailAddress, 2, rec.ReportName, []);
+// 	}
+// };
+
+// sendmail();
 
 // Start Keystone to connect to your database and initialise the web server
 keystone.start();
