@@ -11,22 +11,26 @@ const Record = new keystone.List('Record', {
 });
 
 Record.add({
-    ReportName: { type: String, initial:true, index:true },
+    Document: { type: String, initial:true, index:true },
     InsuranceDate: { type: Types.Date, initial:true },
     ExpiryDate: { type: Types.Date, initial:true },
     FrequencyOfRenewal: { type: String, initial:true },
-    DeadlineOfRenewal: { type: Types.Date, initial:true },
-    Regulator: { type: String },
-    ReportProcessor: { type: String },
-    ReportProcessorContactNo: { type: Types.Number },
-    ReportProcessorEmailAddress: { type: Types.Email },
-    ImmediateSuperior: { type: String },
-    EmailAddress2: { type: Types.Email },
-    ReportOwner: { type: String },
-    ContactNo2: { type: Types.Number },
-    EmailAddress3: { type: Types.Email },
-    ImmediateSuperior2: { type: String },
-    EmailAddress4: { type: Types.Email },
+    DeadlineOfRenewal: { type: String, initial:true },
+    RenewalDate: { type: Types.Date, initial:true },
+    Agency: { type: String },
+    Address: { type: String },
+    AgencyContactNo: { type: Types.Number },
+    Function: { type: String },
+    Processor: { type: String },
+    ProcessorContactNo: { type: Types.Number },
+    ProcessorEmailAddress: { type: Types.Email },
+    ProcessorImmediateSuperior: { type: String },
+    ProcessorIMEmailAddress: { type: Types.Email },
+    Owner: { type: String },
+    OwnerContactNo: { type: Types.Number },
+    OwnerEmailAddress: { type: Types.Email },
+    OwnerImmediateSuperior: { type: String },
+    OwnerImEmailAddress: { type: Types.Email },
     Status: { type: String },
     Ageing: { type: Types.Number },
     OngoingProcessDeadline: { type: String },
@@ -36,5 +40,5 @@ Record.add({
 });
 
 
-Record.defaultColumns = 'ReportName, InsuranceDate, location,';
+Record.defaultColumns = 'Document, InsuranceDate, location,';
 Record.register();
