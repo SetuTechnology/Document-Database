@@ -115,12 +115,12 @@ let checkForExpired = cron.schedule( '* 1 0 * * *', async ()=>{  //check for dea
 
 	let deadlineRecords = await Record.find({DeadlineOfRenewal: {$gte: start, $lt: end}});
 	for(let rec of deadlineRecords){
-		let a = await services.SendEmail.sendEmailToUser(rec.ReportProcessorEmailAddress, 1, rec.ReportName, []);
+		let a = await services.SendEmail.sendEmailToUser(rec, 1);
 	}
 
 	let expiredRecords = await Record.find({DeadlineOfRenewal: {$gte: start, $lt: end}});
 	for(let rec of expiredRecords){
-		let a = await services.SendEmail.sendEmailToUser(rec.ReportProcessorEmailAddress, 2, rec.ReportName, []);
+		let a = await services.SendEmail.sendEmailToUser(rec, 2);
 	}
 
 

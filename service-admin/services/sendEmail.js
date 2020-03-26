@@ -2,11 +2,11 @@ const keystone = require('keystone');
 const nodemailer = require("nodemailer");
 
 exports = module.exports = class SendEmail {
-    async sendEmailToUser(email, type, reportName, ...values){
+    async sendEmailToUser(data, type){
         console.log('inside sendMail');
-        if(email==null||type==null||reportName==null){
-            console.log('email is ', email, 'type is ',type, ' report name is ', reportName);
-            return;
+        if(data.ProcessorEmailAddress==null||type==null||data.Document==null||type<0||type>4){
+            console.log('email is ', data.ProcessorEmailAddress, 'type is ',type, ' report name is ', data.Document);
+            return false;
         }
         /*
             TYPES
@@ -23,68 +23,111 @@ exports = module.exports = class SendEmail {
         let html = '';
 
         switch(type){
-            case 1:
-                text = `Greetings!
+            case '1':
+                text =`Hello ${data.Processor} !
 
-                    Just checking up on the latest status of the following document/s:
-                        ${reportName}
-                    With the expiration date nearing, today is the supposed deadline for its/their renewal, and I was wondering if the application/s for such is/are currently being processed? Hopefully all has been well but if you hit any roadblocks or require any assistance in processing, please leave me a message or call me about your concern so that I, or the team, will be able to assist you.
-                    
-                    Thank you and kind regards,
-                    Anne.
+                    Could you please inform me of the current status and timeline of these documents?
+                       ${data.Document}
+                    With the date of expiry nearing, now would be the ideal time to process the application/s for such. If ever you require any assistance, please do not hesitate to call or message me so that I, or the team, would be able to assist you.
+                                        
+                    Thank you and best regards!
                     
                     (This is an auto-generated message.)`;
 
 
-                html = `Greetings!
+                html = `Hello ${data.Processor} !<br>
 
-                    Just checking up on the latest status of the following document/s:
-                    <ul>
-                        <li>
-                            ${reportName}
-                        </li>
-                    </ul>
-                     With the expiration date nearing, today is the supposed deadline for its/their renewal, and I was wondering if the application/s for such is/are currently being processed? Hopefully all has been well but if you hit any roadblocks or require any assistance in processing, please leave me a message or call me about your concern so that I, or the team, will be able to assist you.
-                    <br/><br/>
-                    Thank you and kind regards,<br/>
-                    Anne.
-                    <br/><br/>
-                    (This is an auto-generated message.)`;
+                Could you please inform me of the current status and timeline of these documents?<br>
+                    <li><ul>${data.Document}</ul></li>
+                With the date of expiry nearing, now would be the ideal time to process the application/s for such. If ever you require any assistance, please do not hesitate to call or message me so that I, or the team, would be able to assist you.
+                <br><br>
+                Thank you and best regards!
+                 <br><br>
+                (This is an auto-generated message.)`;
                 break;
 
-            case 2:
-                text = `Greetings!
-                    Just checking up on the latest status of the following document/s:
-                        ${reportName}
-                    With today being the expiration date, I was wondering if this had/these have been processed? 
-                    Hopefully it has/they have been settled before today so you won’t have to handle further headaches. If not, however, may I know what the roadblock/s is/are? If you require any assistance in resolving the issue/s, please leave me a message or call me about your concern so that I, or the team, will be able to assist you.
-                    
-                    Thank you and kind regards,
-                    Anne.
-                    (This is an auto-generated message.)`;
+            case '2':
+                text = `Hello, ${data.Processor} !
+                        Could you please inform me of the current status and timeline of these documents?
+                            ${data.Document}
+                        Given that today is the expiration date of such document/s, I was wondering if this has/these
+                        have already been processed? If not, may I know what the issue is? If ever you require any assistance, please do not hesitate to call or message me so that I, or the team, would be able to assist you.
+                       
+                        Thank you and best regards!
+                        (This is an auto-generated message.)`;
 
 
-                html = `Greetings!
-                    Just checking up on the latest status of the following document/s:
-                    <ul>
-                        <li>    
-                            ${reportName}
-                        </li>
-                    </ul>
-                    With today being the expiration date, I was wondering if this had/these have been processed? 
-                    <br/>
-                    Hopefully it has/they have been settled before today so you won’t have to handle further headaches. If not, however, may I know what the roadblock/s is/are? If you require any assistance in resolving the issue/s, please leave me a message or call me about your concern so that I, or the team, will be able to assist you.
-                    <br/><br/>
-                    Thank you and kind regards,<br/>
-                    Anne.
-                    <br/><br/>
-                    (This is an auto-generated message.)`;
+                html = `Hello, ${data.Processor} !<br>
+                        Could you please inform me of the current status and timeline of these documents?<br>
+                            <li><ul>${data.Document}</ul></li>
+                        Given that today is the expiration date of such document/s, I was wondering if this has/these have already been processed? If not, may I know what the issue is? If ever you require any assistance, please do not hesitate to call or message me so that I, or the team, would be able to assist you.
+                        <br><br>
+                        Thank you and best regards!
+                        <br><br>
+                        (This is an auto-generated message.)`;
                 break;
-            case 3:
+            case '3':
+                text = `${new Date().toJSON().slice(0,10)}
+                
+                        ${data.Agency}
+                        ${data.Address}
+                        To whom it may concern:
+                        
+                        This letter is just to remind you about our application for ${data.Document}. The deadline is almost upon us and we are concerned of the possible delay. We are enclosing a duplicate application
+                        and/or renewal form in case the original form and documents have been misplaced. Please have these reviewed, and if you need any further information or verification regarding this matter, you
+                        may contact me through ${data.ProcessorContactNo} or ${data.ProcessorEmailAddress} – preferably the former – at your earliest convenience. Thank you for your cooperation.
+                        
+                        Regards,
+        
+                        _______________
+                        ${data.Processor}`;
+
+                html = `${new Date().toJSON().slice(0,10)}
+                        <br><br>
+                        ${data.Agency}<br>
+                        ${data.Address}<br>
+                        To whom it may concern:
+                        <br/>
+                        This letter is just to remind you about our application for ${data.Document}. The deadline is almost upon us and we are concerned of the possible delay. We are enclosing a duplicate application
+                        and/or renewal form in case the original form and documents have been misplaced. Please have these reviewed, and if you need any further information or verification regarding this matter, you
+                        may contact me through ${data.ProcessorContactNo} or ${data.ProcessorEmailAddress} – preferably the former – at your earliest convenience. Thank you for your cooperation.
+                        <br><br>
+                        Regards,
+                        <br/><br/>
+                        _______________<br>
+                        ${data.Processor}`;
                 break;
-            case 4:
+            case '4':
+                text = `${new Date().toJSON().slice(0,10)}
+                
+                        ${data.Agency}
+                        ${data.Address}
+                        To whom it may concern:
+                        
+                        We are sending this short note to remind you of our application for ${data.Document}. Enclosed is a
+                        copy of our first letter to you, dated and delivered on ${data.RenewalDate}. We would like to hear from
+                        you in three (3) to five (5) business days. Thank you for your prompt attention to this matter.
+                        Regards,
+                        
+                        _______________
+                        ${data.Processor}`;
+
+                html = `${new Date().toJSON().slice(0,10)}
+                        <br><br>
+                        ${data.Agency}<br>
+                        ${data.Address}<br>
+                        To whom it may concern:<br>
+                        <br>
+                        We are sending this short note to remind you of our application for ${data.Document}. Enclosed is a copy of our first letter to you, dated and delivered on ${data.RenewalDate}. We would like to hear from you in three (3) to five (5) business days. Thank you for your prompt attention to this matter.
+                        <br>
+                        Regards,
+                        <br><br>
+                        _______________<br>
+                        ${data.Processor}`;
                 break;
             default:
+                text = ``;
+                html = ``;
                 break;
         }
 
@@ -103,7 +146,7 @@ exports = module.exports = class SendEmail {
         // send mail with defined transport object
         let info = {
             from: '456chaser@gmail.com', // sender address
-            to: email, // list of receivers
+            to: data.ProcessorEmailAddress, // list of receivers
             subject: 'Reports update for the month', // Subject line
             text: text, //plain text body
             html: html, //html body
