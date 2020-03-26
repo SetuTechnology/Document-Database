@@ -25,3 +25,15 @@ Location.relationship({ ref: 'Record', path: 'record', refPath: 'location' });
  */
 Location.defaultColumns = 'name';
 Location.register();
+
+Location.model.schema.pre('save',async function (next) {
+    if(this.GDriveLink){
+        let Record = keystone.list('Record').model;
+        await Record.update({location:this._id}, { GDriveLink: this.GDriveLink }, { multi: true }, function(err, res) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
+    next();
+});

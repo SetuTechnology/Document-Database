@@ -42,3 +42,15 @@ Record.add({
 
 Record.defaultColumns = 'Document, InsuranceDate, location,';
 Record.register();
+
+Record.model.schema.pre('save', async function(next){
+    if(!this.GDriveLink) {
+        let Location = keystone.list('Location').model;
+        let location = await Location.findOne({_id: this.location}).catch(err => {console.log(err)});
+
+        if(location){
+            this.GDriveLink = location.GDriveLink;
+        }
+    }
+    next();
+});

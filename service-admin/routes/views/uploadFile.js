@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
 
     let fileData = req.files.files; // the uploaded file object
     console.log('>>>>>',fileData);
-    if(!fileData) return 'no file uploaded';
+    if(!fileData) res.redirect('/fileupload');
     let result = 2;
 
     if(Array.isArray(fileData)) {
@@ -54,6 +54,7 @@ async function readFile(file){
         await location.save().catch(console.error);
     }
     let loc =  await Location.findOne({name: locName}).catch(err => {console.log(err)});
+    let gdriveLink = loc.GDriveLink;
     console.log('loc',loc);
     // let today = new Date();
     let Record = keystone.list('Record').model;
@@ -102,6 +103,7 @@ async function readFile(file){
                     OngoingProcessDeadline: results[sheet][records]['ONGOING PROCESS  DATE DEADLINE'] === 'n/a' ? null : results[sheet][records]['ONGOING PROCESS  DATE DEADLINE'],
                     Remarks: results[sheet][records]['REMARKS'] === 'n/a' ? null : results[sheet][records]['REMARKS'],
                     location: await loc,
+                    GDriveLink: gdriveLink,
                 });
                 await record.save((err)=>{console.log(err)});
             }
