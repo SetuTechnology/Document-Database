@@ -37,3 +37,10 @@ Location.model.schema.pre('save',async function (next) {
     }
     next();
 });
+
+Location.model.schema.pre('remove', async function(next){
+    console.log('before remove');
+    let Record = keystone.list('Record').model;
+    await Record.remove({_id: this.name}).catch(err => {console.log(err)});
+    next();
+})

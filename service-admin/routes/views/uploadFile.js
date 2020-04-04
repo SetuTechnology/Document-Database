@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
     // if(exampleId!=='fileUpload') return res.send('404');
 
     let fileData = req.files.files; // the uploaded file object
-    console.log('>>>>>',fileData);
+    // console.log('>>>>>',fileData);
     if(!fileData) res.redirect('/fileupload');
     let result = 2;
 
@@ -55,7 +55,7 @@ async function readFile(file){
     }
     let loc =  await Location.findOne({name: locName}).catch(err => {console.log(err)});
     let gdriveLink = loc.GDriveLink;
-    console.log('loc',loc);
+    // console.log('loc',loc);
     // let today = new Date();
     let Record = keystone.list('Record').model;
     for(let sheet in results){
@@ -102,7 +102,7 @@ async function readFile(file){
                     Ageing: results[sheet][records]['AGEING'] === 'n/a' ? null : results[sheet][records]['AGEING'],
                     OngoingProcessDeadline: results[sheet][records]['ONGOING PROCESS  DATE DEADLINE'] === 'n/a' ? null : results[sheet][records]['ONGOING PROCESS  DATE DEADLINE'],
                     Remarks: results[sheet][records]['REMARKS'] === 'n/a' ? null : results[sheet][records]['REMARKS'],
-                    location: await loc,
+                    location: await loc._id,
                     GDriveLink: gdriveLink,
                 });
                 await record.save((err)=>{console.log(err)});
