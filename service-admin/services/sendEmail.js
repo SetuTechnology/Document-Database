@@ -138,14 +138,14 @@ exports = module.exports = class SendEmail {
             auth: {
                 // user: 'process.env.GOOGLE_USER',
                 // pass: 'process.env.GOOGLE_PASS',
-                user: 'rishabhkk55@gmail.com',
-                pass: 'ujjwalrk',
+                user: 'some@gmail.com',
+                pass: 'somePass',
             }
         });
 
         // send mail with defined transport object
         let info = {
-            from: '456chaser@gmail.com', // sender address
+            from: 'somePass@gmail.com', // sender address
             to: data.ProcessorEmailAddress, // list of receivers
             subject: 'Reports update for the month', // Subject line
             text: text, //plain text body
